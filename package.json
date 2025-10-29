@@ -1,0 +1,16 @@
+{
+  "name": "@supercat1337/tree-tool",
+  "version": "1.0.0",
+  "description": "An analogue of the Windows tree command for Node.js",
+  "main": "tree.js",
+  "bin": {
+    "ntree": "./tree.js"
+  },
+  "scripts": {
+    "start": "node tree.js"
+  },
+  "type": "module",
+  "keywords": ["tree", "directory", "windows", "cli"],
+  "author": "Your Name",
+  "license": "MIT"
+}
