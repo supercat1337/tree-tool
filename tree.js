@@ -1,7 +1,8 @@
 // @ts-check
 
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
+import { parseArgs } from 'node:util';
 
 
 function getModuleFilename() {
@@ -21,19 +22,33 @@ const scriptName = getModuleFilename();
 const isMainModule = import.meta.url.endsWith(scriptName);
 
 /**
+ * Outputs text to either console or a file
+ * @param {string} text - text to output
+ * @param {string|null} outputFile - file path to output to, or null to output to console
+ */
+function output(text, outputFile) {
+    if (outputFile) {
+        fs.appendFileSync(outputFile, text + "\n");
+    } else {
+        console.log(text);
+    }
+}
+
+/**
  * Analogue of Windows tree command
  * @param {string} dirPath - path to directory
  * @param {Object} options - options
  * @param {boolean} options.showFiles - show files (/f)
  * @param {boolean} options.useAscii - use ASCII characters (/a)
+ * @param {string|null} options.outputFile - output file path
  * @param {number} maxDepth - maximum recursion depth
  */
 function tree(
     dirPath = ".",
-    options = { showFiles: false, useAscii: false },
+    options = { showFiles: false, useAscii: false, outputFile: null },
     maxDepth = -1
 ) {
-    const { showFiles = false, useAscii = false } = options;
+    const { showFiles = false, useAscii = false, outputFile = null } = options;
 
     // Symbols for tree drawing
     const symbols = useAscii ? {
@@ -96,7 +111,7 @@ function tree(
                 const connector = isLastItem ? symbols.corner : symbols.branch;
 
                 // Current line
-                result += prefix + connector + item + "\n";
+                result += prefix + connector + item + (isDirectory ? "/" : "") + "\n";
 
                 // Recursively process subdirectories
                 if (isDirectory) {
@@ -141,85 +156,71 @@ function tree(
         process.exit(1);
     }
 
+    if (outputFile) {
+        if (fs.existsSync(outputFile)) {
+            fs.unlinkSync(outputFile);
+        }
+    }
+
     // Get absolute path and normalize it
     const absolutePath = path.resolve(dirPath);
     const drive = absolutePath.match(/^([A-Za-z]:)/)?.[1] || "";
     const displayPath = absolutePath.replace(/^[A-Za-z]:/, "");
 
-    /*
-    // Display header like Windows tree
-    console.log(`${drive}\n${displayPath}\n`);
-    */
-
-    console.log(absolutePath.replace(/\\/g, "/"));
+    output(absolutePath.replace(/\\/g, "/"), outputFile);
 
     const treeStructure = buildTree(absolutePath);
-    console.log(treeStructure);
-/*
-    // Display statistics like Windows tree
-    try {
-        const allItems = fs.readdirSync(absolutePath);
-        const dirs = allItems.filter((item) => {
-            return fs.statSync(path.join(absolutePath, item)).isDirectory();
-        });
-        const files = allItems.filter((item) => {
-            return fs.statSync(path.join(absolutePath, item)).isFile();
-        });
-
-        let statsText = "";
-        if (showFiles) {
-            statsText = `    ${dirs.length} directories, ${files.length} files`;
-        } else {
-            statsText = `    ${dirs.length} directories`;
-        }
-
-        console.log(statsText);
-    } catch (error) {
-        console.log(`    [Failed to get statistics]`);
-    }
-*/
+    output(treeStructure, outputFile);
 }
 
-/**
- * Parse command line arguments
- */
-function parseArgs() {
-    const args = process.argv.slice(2);
-    let dirPath = ".";
-    const options = {
-        showFiles: false,
-        useAscii: false,
-    };
-
-    for (let i = 0; i < args.length; i++) {
-        const arg = args[i];
-
-        if (arg.startsWith("/") || arg.startsWith("-")) {
-            const option = arg.toLowerCase().replace(/[/-]/g, "");
-            switch (option) {
-                case "f":
-                    options.showFiles = true;
-                    break;
-                case "a":
-                    options.useAscii = true;
-                    break;
-                case "?":
-                case "h":
-                case "help":
-                    showHelp();
-                    process.exit(0);
-                default:
-                    console.error(`Unknown parameter: ${arg}`);
-                    showHelp();
-                    process.exit(1);
+function parseCommandLineArgsWithUtil() {
+    const { values, positionals } = parseArgs({
+        args: process.argv.slice(2),
+        options: {
+            f: {
+                type: 'boolean',
+                short: 'f'
+            },
+            files: {
+                type: 'boolean'
+            },
+            a: {
+                type: 'boolean',
+                short: 'a'
+            },
+            ascii: {
+                type: 'boolean'
+            },
+            o: {
+                type: 'string',
+                short: 'o'
+            },
+            output: {
+                type: 'string'
+            },
+            h: {
+                type: 'boolean',
+                short: 'h'
+            },
+            help: {
+                type: 'boolean'
             }
-        } else {
-            // This is the path
-            if (!dirPath || dirPath === ".") {
-                dirPath = arg;
-            }
-        }
+        },
+        allowPositionals: true
+    });
+
+    if (values.h || values.help) {
+        showHelp();
+        process.exit(0);
     }
+
+    const dirPath = positionals[0] || ".";
+    
+    const options = {
+        showFiles: values.f || values.files || false,
+        useAscii: values.a || values.ascii || false,
+        outputFile: values.o || values.output || null
+    };
 
     return { dirPath, options };
 }
@@ -229,20 +230,28 @@ function parseArgs() {
  */
 function showHelp() {
     console.log(`
-Usage: node tree.js [<drive>:][<path>] [/f] [/a]
+Usage: node tree.js [directory] [options]
 
 Parameters:
-    [<drive>:][<path>]  Specifies drive and directory for tree display
-    /f                  Displays files in each directory
-    /a                  Uses ASCII characters instead of extended characters
-    /? or /h           Displays this help
+    directory           Specifies directory for tree display (default: current directory)
+
+Options:
+    -f, --files         Displays files in each directory
+    -a, --ascii         Uses ASCII characters instead of extended characters
+    -o, --output <file> Outputs to a file
+    -h, --help         Displays this help
 
 Examples:
-    node tree.js                    # Current directory
-    node tree.js C:\\Projects        # Specific directory
-    node tree.js /f                 # Displays files
-    node tree.js /a                 # Uses ASCII characters
-    node tree.js C:\\Projects /f /a  # Combination of parameters
+    node tree.js                        # Current directory
+    node tree.js C:\\\\Projects           # Specific directory
+    node tree.js -f                     # Displays files
+    node tree.js --files                # Displays files (long form)
+    node tree.js -a                     # Uses ASCII characters
+    node tree.js --ascii                # Uses ASCII characters (long form)
+    node tree.js -o output.txt          # Outputs to a file
+    node tree.js --output output.txt    # Outputs to a file (long form)
+    node tree.js C:\\\\Projects -f -a     # Combination of parameters
+    node tree.js --help                 # Shows this help
     `);
 }
 
@@ -262,7 +271,7 @@ function main() {
     }
 
     try {
-        const { dirPath, options } = parseArgs();
+        const { dirPath, options } = parseCommandLineArgsWithUtil();
         tree(dirPath, options);
     } catch (error) {
         if (error instanceof Error) {
