@@ -1,18 +1,17 @@
 // @ts-check
 
-import fs from "node:fs";
-import path from "node:path";
+import fs from 'node:fs';
+import path from 'node:path';
 import { parseArgs } from 'node:util';
 
-
 function getModuleFilename() {
-    let scriptName = process.argv[1].replace(/\\/g, "/");
-    if (!scriptName.endsWith(".js")) {
-        scriptName += ".js";
+    let scriptName = process.argv[1].replace(/\\/g, '/');
+    if (!scriptName.endsWith('.js')) {
+        scriptName += '.js';
     }
 
-    if (!scriptName.startsWith("file:///")) {
-        scriptName = "file:///" + scriptName;
+    if (!scriptName.startsWith('file:///')) {
+        scriptName = 'file:///' + scriptName;
     }
 
     return scriptName;
@@ -28,7 +27,7 @@ const isMainModule = import.meta.url.endsWith(scriptName);
  */
 function output(text, outputFile) {
     if (outputFile) {
-        fs.appendFileSync(outputFile, text + "\n");
+        fs.appendFileSync(outputFile, text + '\n');
     } else {
         console.log(text);
     }
@@ -44,24 +43,26 @@ function output(text, outputFile) {
  * @param {number} maxDepth - maximum recursion depth
  */
 function tree(
-    dirPath = ".",
+    dirPath = '.',
     options = { showFiles: false, useAscii: false, outputFile: null },
     maxDepth = -1
 ) {
     const { showFiles = false, useAscii = false, outputFile = null } = options;
 
     // Symbols for tree drawing
-    const symbols = useAscii ? {
-        vertical: '|   ',
-        branch: '|-- ',
-        corner: '\\-- ',
-        space: '    '
-    } : {
-        vertical: '│   ',
-        branch: '├── ',
-        corner: '└── ',
-        space: '    '
-    };
+    const symbols = useAscii
+        ? {
+              vertical: '|   ',
+              branch: '|-- ',
+              corner: '\\-- ',
+              space: '    ',
+          }
+        : {
+              vertical: '│   ',
+              branch: '├── ',
+              corner: '└── ',
+              space: '    ',
+          };
 
     /**
      * Recursive function for building tree
@@ -71,9 +72,9 @@ function tree(
      * @param {number} depth - current recursion depth
      * @returns {string} - string representation of tree
      */
-    function buildTree(currentPath, prefix = "", isLast = true, depth = 0) {
+    function buildTree(currentPath, prefix = '', isLast = true, depth = 0) {
         if (maxDepth !== -1 && depth > maxDepth) {
-            return "";
+            return '';
         }
 
         try {
@@ -81,7 +82,7 @@ function tree(
 
             // Sort items: directories first, then files
             const sortedItems = items
-                .filter((item) => {
+                .filter(item => {
                     // If not showing files, filter only directories
                     if (!showFiles) {
                         const itemPath = path.join(currentPath, item);
@@ -97,10 +98,10 @@ function tree(
 
                     if (aIsDir && !bIsDir) return -1;
                     if (!aIsDir && bIsDir) return 1;
-                    return a.localeCompare(b, "en");
+                    return a.localeCompare(b, 'en');
                 });
 
-            let result = "";
+            let result = '';
 
             // Process each item
             sortedItems.forEach((item, index) => {
@@ -111,37 +112,25 @@ function tree(
                 const connector = isLastItem ? symbols.corner : symbols.branch;
 
                 // Current line
-                result += prefix + connector + item + (isDirectory ? "/" : "") + "\n";
+                result += prefix + connector + item + (isDirectory ? '/' : '') + '\n';
 
                 // Recursively process subdirectories
                 if (isDirectory) {
-                    const newPrefix =
-                        prefix +
-                        (isLastItem ? symbols.space : symbols.vertical);
-                    result += buildTree(
-                        itemPath,
-                        newPrefix,
-                        isLastItem,
-                        depth + 1
-                    );
+                    const newPrefix = prefix + (isLastItem ? symbols.space : symbols.vertical);
+                    result += buildTree(itemPath, newPrefix, isLastItem, depth + 1);
                 }
             });
 
             return result;
         } catch (error) {
             if (error instanceof Error) {
-                console.error(
-                    `Error reading path ${currentPath}: ${error.message}`
-                );
+                console.error(`Error reading path ${currentPath}: ${error.message}`);
             } else {
-                console.error(
-                    `Unknown error reading path ${currentPath}`,
-                    error
-                );
+                console.error(`Unknown error reading path ${currentPath}`, error);
             }
         }
 
-        return "";
+        return '';
     }
 
     // Check if path exists
@@ -164,10 +153,10 @@ function tree(
 
     // Get absolute path and normalize it
     const absolutePath = path.resolve(dirPath);
-    const drive = absolutePath.match(/^([A-Za-z]:)/)?.[1] || "";
-    const displayPath = absolutePath.replace(/^[A-Za-z]:/, "");
+    const drive = absolutePath.match(/^([A-Za-z]:)/)?.[1] || '';
+    const displayPath = absolutePath.replace(/^[A-Za-z]:/, '');
 
-    output(absolutePath.replace(/\\/g, "/"), outputFile);
+    output(absolutePath.replace(/\\/g, '/'), outputFile);
 
     const treeStructure = buildTree(absolutePath);
     output(treeStructure, outputFile);
@@ -179,34 +168,34 @@ function parseCommandLineArgsWithUtil() {
         options: {
             f: {
                 type: 'boolean',
-                short: 'f'
+                short: 'f',
             },
             files: {
-                type: 'boolean'
+                type: 'boolean',
             },
             a: {
                 type: 'boolean',
-                short: 'a'
+                short: 'a',
             },
             ascii: {
-                type: 'boolean'
+                type: 'boolean',
             },
             o: {
                 type: 'string',
-                short: 'o'
+                short: 'o',
             },
             output: {
-                type: 'string'
+                type: 'string',
             },
             h: {
                 type: 'boolean',
-                short: 'h'
+                short: 'h',
             },
             help: {
-                type: 'boolean'
-            }
+                type: 'boolean',
+            },
         },
-        allowPositionals: true
+        allowPositionals: true,
     });
 
     if (values.h || values.help) {
@@ -214,12 +203,12 @@ function parseCommandLineArgsWithUtil() {
         process.exit(0);
     }
 
-    const dirPath = positionals[0] || ".";
-    
+    const dirPath = positionals[0] || '.';
+
     const options = {
         showFiles: values.f || values.files || false,
         useAscii: values.a || values.ascii || false,
-        outputFile: values.o || values.output || null
+        outputFile: values.o || values.output || null,
     };
 
     return { dirPath, options };
@@ -262,9 +251,7 @@ function main() {
     // If no arguments or help requested
     if (
         process.argv.length <= 2 ||
-        process.argv.some((arg) =>
-            ["/?", "/h", "-?", "-h", "--help"].includes(arg.toLowerCase())
-        )
+        process.argv.some(arg => ['/?', '/h', '-?', '-h', '--help'].includes(arg.toLowerCase()))
     ) {
         showHelp();
         return;
@@ -289,4 +276,3 @@ if (isMainModule) {
 }
 
 export { tree, parseArgs };
-

@@ -17,7 +17,7 @@ A cross-platform directory tree visualization tool with modern ES6 syntax, built
 ### Method 1: Clone the repository
 ```bash
 git clone https://github.com/supercat1337/tree-tool.git
-cd node-tree-command
+cd tree-tool
 ```
 
 ### Method 2: Direct download

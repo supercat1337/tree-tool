@@ -1,6 +1,6 @@
 {
   "name": "@supercat1337/tree-tool",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An analogue of the Windows tree command for Node.js",
   "main": "tree.js",
   "bin": {
