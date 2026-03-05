@@ -4,7 +4,7 @@
   "description": "An analogue of the Windows tree command for Node.js",
   "main": "tree.js",
   "bin": {
-    "ntree": "./tree.js"
+    "tree-tool": "./tree.js"
   },
   "scripts": {
     "start": "node tree.js"
