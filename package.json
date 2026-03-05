@@ -11,6 +11,6 @@
   },
   "type": "module",
   "keywords": ["tree", "directory", "windows", "cli"],
-  "author": "Your Name",
+  "author": "Albert Bazaleev",
   "license": "MIT"
 }
