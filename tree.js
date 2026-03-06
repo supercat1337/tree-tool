@@ -6,21 +6,35 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 
-function getModuleFilename() {
-    let scriptName = process.argv[1].replace(/\\/g, '/');
-    if (!scriptName.endsWith('.js')) {
-        scriptName += '.js';
-    }
+/**
+ * Determines if the current module is the main entry point (i.e., executed directly,
+ * not imported by another module). Handles cases where the script is invoked via
+ * a symbolic link (e.g., `npm link`).
+ *
+ * @returns {boolean} True if the module is the main script, false otherwise.
+ */
+function isMainModule() {
+    // Path passed via command line (argv[1])
+    let argvPath = process.argv[1];
+    if (!argvPath) return false;
 
-    if (!scriptName.startsWith('file:///')) {
-        scriptName = 'file:///' + scriptName;
-    }
+    // Convert to absolute path if relative, and normalize
+    argvPath = path.resolve(argvPath);
 
-    return scriptName;
+    // Extract the filesystem path from import.meta.url (remove the 'file://' protocol)
+    const modulePath = new URL(import.meta.url).pathname;
+
+    // On Windows, URL.pathname returns a path like '/C:/...' – strip the leading slash
+    const normalizedModulePath = process.platform === 'win32'
+        ? modulePath.slice(1)  // remove the extra '/'
+        : modulePath;
+
+    // Resolve symbolic links for both paths to get the canonical real paths
+    const realArgvPath = fs.realpathSync(argvPath);
+    const realModulePath = fs.realpathSync(normalizedModulePath);
+
+    return realArgvPath === realModulePath;
 }
-
-const scriptName = getModuleFilename();
-const isMainModule = import.meta.url.endsWith(scriptName);
 
 /**
  * Outputs text to either console or a file
@@ -219,31 +233,63 @@ function parseCommandLineArgsWithUtil() {
 /**
  * Show help
  */
+/**
+ * Displays help information with aligned columns.
+ * Short and long option forms are shown on the same line.
+ */
 function showHelp() {
-    console.log(`
-Usage: node tree.js [directory] [options]
+    const options = [
+        { short: '-f', long: '--files', description: 'Displays files in each directory' },
+        { short: '-a', long: '--ascii', description: 'Uses ASCII characters instead of extended characters' },
+        { short: '-o', long: '--output <file>', description: 'Outputs to a file' },
+        { short: '-h', long: '--help', description: 'Displays this help' },
+    ];
 
-Parameters:
-    directory           Specifies directory for tree display (default: current directory)
+    const examples = [
+        { cmd: 'tree-tool', comment: 'Current directory' },
+        { cmd: 'tree-tool C:\\\\Projects', comment: 'Specific directory' },
+        { cmd: 'tree-tool -f, --files', comment: 'Displays files' },
+        { cmd: 'tree-tool -a, --ascii', comment: 'Uses ASCII characters' },
+        { cmd: 'tree-tool -o, --output output.txt', comment: 'Outputs to a file' },
+        { cmd: 'tree-tool C:\\\\Projects -f -a', comment: 'Combination of parameters' },
+        { cmd: 'tree-tool -h, --help', comment: 'Shows this help' },
+    ];
 
-Options:
-    -f, --files         Displays files in each directory
-    -a, --ascii         Uses ASCII characters instead of extended characters
-    -o, --output <file> Outputs to a file
-    -h, --help         Displays this help
+    // Calculate maximum width for alignment
+    const maxOptionLength = Math.max(
+        ...options.map(opt => `  ${opt.short}, ${opt.long}`.length)
+    );
+    const maxExampleLength = Math.max(
+        ...examples.map(ex => `  ${ex.cmd}`.length)
+    );
 
-Examples:
-    node tree.js                        # Current directory
-    node tree.js C:\\\\Projects           # Specific directory
-    node tree.js -f                     # Displays files
-    node tree.js --files                # Displays files (long form)
-    node tree.js -a                     # Uses ASCII characters
-    node tree.js --ascii                # Uses ASCII characters (long form)
-    node tree.js -o output.txt          # Outputs to a file
-    node tree.js --output output.txt    # Outputs to a file (long form)
-    node tree.js C:\\\\Projects -f -a     # Combination of parameters
-    node tree.js --help                 # Shows this help
-    `);
+    const lines = [
+        'Usage: tree-tool [directory] [options]',
+        '',
+        'Parameters:',
+        '  directory           Specifies directory for tree display (default: current directory)',
+        '',
+        'Options:',
+    ];
+
+    // Add options with aligned descriptions
+    options.forEach(opt => {
+        const left = `  ${opt.short}, ${opt.long}`;
+        const padding = ' '.repeat(maxOptionLength - left.length + 2);
+        lines.push(left + padding + opt.description);
+    });
+
+    lines.push('');
+    lines.push('Examples:');
+
+    // Add examples with aligned comments
+    examples.forEach(ex => {
+        const left = `  ${ex.cmd}`;
+        const padding = ' '.repeat(maxExampleLength - left.length + 2);
+        lines.push(left + padding + '# ' + ex.comment);
+    });
+
+    console.log(lines.join('\n'));
 }
 
 /**
@@ -273,7 +319,7 @@ function main() {
 }
 
 // Call main function if script is called directly
-if (isMainModule) {
+if (isMainModule()) {
     main();
 }
 

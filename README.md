@@ -18,6 +18,8 @@ A cross-platform directory tree visualization tool with modern ES6 syntax, built
 ```bash
 git clone https://github.com/supercat1337/tree-tool.git
 cd tree-tool
+npm install
+npm link
 ```
 
 ### Method 2: Direct download
@@ -28,11 +30,11 @@ Download `tree.js` and run it with Node.js.
 ### Basic Usage
 ```bash
 # Show directory structure (folders only)
-node tree.js
+tree-tool
 
 # Show specific directory
-node tree.js C:/Projects
-node tree.js ./src
+tree-tool C:/Projects
+tree-tool ./src
 ```
 
 ### Command Line Options
@@ -48,33 +50,33 @@ node tree.js ./src
 
 ```bash
 # Current directory (folders only)
-node tree.js
+tree-tool
 
 # Show files in directory
-node tree.js -f
-node tree.js --files
+tree-tool -f
+tree-tool --files
 
 # Use ASCII characters
-node tree.js -a
-node tree.js --ascii
+tree-tool -a
+tree-tool --ascii
 
 # Output to file
-node tree.js -o output.txt
-node tree.js --output tree-structure.txt
+tree-tool -o output.txt
+tree-tool --output tree-structure.txt
 
 # Show files with ASCII characters
-node tree.js -f -a
-node tree.js --files --ascii
+tree-tool -f -a
+tree-tool --files --ascii
 
 # Specific path with all options
-node tree.js C:\Projects\my-app -f -a -o tree.txt
+tree-tool C:/Projects/my-app -f -a -o tree.txt
 
 # Help information
-node tree.js -h
-node tree.js --help
+tree-tool -h
+tree-tool --help
 
 # Combine options
-node tree.js ./src --files --output structure.txt
+tree-tool ./src --files --output structure.txt
 ```
 
 ## API Usage
@@ -142,7 +144,7 @@ my-app/
 ### File Output Example
 ```bash
 # Save tree structure to file
-node tree.js -f -a -o project-structure.txt
+tree-tool -f -a -o project-structure.txt
 ```
 
 ## Comparison with Windows tree
@@ -172,9 +174,9 @@ The tool gracefully handles common errors:
 ### Building and Testing
 ```bash
 # Run with different test cases
-node tree.js -f
-node tree.js -a -o test.txt
-node tree.js ./src --files --ascii
+tree-tool -f
+tree-tool -a -o test.txt
+tree-tool ./src --files --ascii
 ```
 
 ### File Structure

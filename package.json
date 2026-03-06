@@ -1,16 +1,21 @@
 {
-  "name": "@supercat1337/tree-tool",
-  "version": "1.0.1",
-  "description": "An analogue of the Windows tree command for Node.js",
-  "main": "tree.js",
-  "bin": {
-    "tree-tool": "./tree.js"
-  },
-  "scripts": {
-    "start": "node tree.js"
-  },
-  "type": "module",
-  "keywords": ["tree", "directory", "windows", "cli"],
-  "author": "Albert Bazaleev",
-  "license": "MIT"
+    "name": "@supercat1337/tree-tool",
+    "version": "1.0.1",
+    "description": "An analogue of the Windows tree command for Node.js",
+    "main": "tree.js",
+    "bin": {
+        "tree-tool": "./tree.js"
+    },
+    "scripts": {
+        "start": "tree-tool"
+    },
+    "type": "module",
+    "keywords": [
+        "tree",
+        "directory",
+        "windows",
+        "cli"
+    ],
+    "author": "Albert Bazaleev",
+    "license": "MIT"
 }
