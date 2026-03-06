@@ -15,6 +15,7 @@ A cross-platform directory tree visualization tool with modern ES6 syntax, built
 ## Installation
 
 ### Method 1: Clone the repository
+
 ```bash
 git clone https://github.com/supercat1337/tree-tool.git
 cd tree-tool
@@ -23,11 +24,13 @@ npm link
 ```
 
 ### Method 2: Direct download
+
 Download `tree.js` and run it with Node.js.
 
 ## Usage
 
 ### Basic Usage
+
 ```bash
 # Show directory structure (folders only)
 tree-tool
@@ -39,12 +42,12 @@ tree-tool ./src
 
 ### Command Line Options
 
-| Option | Short | Description |
-|--------|-------|-------------|
-| `--files` | `-f` | Display files in each folder |
-| `--ascii` | `-a` | Use ASCII characters instead of extended characters |
-| `--output <file>` | `-o <file>` | Output results to specified file |
-| `--help` | `-h` | Display help information |
+| Option            | Short       | Description                                         |
+| ----------------- | ----------- | --------------------------------------------------- |
+| `--files`         | `-f`        | Display files in each folder                        |
+| `--ascii`         | `-a`        | Use ASCII characters instead of extended characters |
+| `--output <file>` | `-o <file>` | Output results to specified file                    |
+| `--help`          | `-h`        | Display help information                            |
 
 ### Examples
 
@@ -84,6 +87,7 @@ tree-tool ./src --files --output structure.txt
 You can also use the tree function programmatically in your Node.js applications:
 
 ### ES6 Import Syntax
+
 ```javascript
 import { tree } from './tree.js';
 
@@ -98,6 +102,7 @@ tree('./src', { showFiles: true }, 2); // Max 2 levels deep
 ```
 
 ### CommonJS Syntax (if needed)
+
 ```javascript
 const { tree } = require('./tree.js');
 
@@ -114,6 +119,7 @@ tree('./src');
 ## Output Examples
 
 ### Default Output (Unicode)
+
 ```
 my-app/
 ├── src/
@@ -128,6 +134,7 @@ my-app/
 ```
 
 ### ASCII Output (`-a` parameter)
+
 ```
 my-app/
 |-- src/
@@ -142,6 +149,7 @@ my-app/
 ```
 
 ### File Output Example
+
 ```bash
 # Save tree structure to file
 tree-tool -f -a -o project-structure.txt
@@ -149,16 +157,16 @@ tree-tool -f -a -o project-structure.txt
 
 ## Comparison with Windows tree
 
-| Feature | Windows `tree` | This Tool |
-|---------|----------------|-----------|
-| Show files (`/f` / `-f`) | ✅ | ✅ |
-| ASCII mode (`/a` / `-a`) | ✅ | ✅ |
-| Output to file | ❌ | ✅ |
-| Cross-platform | ❌ | ✅ |
-| Custom depth | ❌ | ✅ (via API) |
-| Error handling | Basic | Enhanced |
-| Unicode support | Limited | Full |
-| Modern CLI syntax | ❌ | ✅ |
+| Feature                  | Windows `tree` | This Tool    |
+| ------------------------ | -------------- | ------------ |
+| Show files (`/f` / `-f`) | ✅             | ✅           |
+| ASCII mode (`/a` / `-a`) | ✅             | ✅           |
+| Output to file           | ❌             | ✅           |
+| Cross-platform           | ❌             | ✅           |
+| Custom depth             | ❌             | ✅ (via API) |
+| Error handling           | Basic          | Enhanced     |
+| Unicode support          | Limited        | Full         |
+| Modern CLI syntax        | ❌             | ✅           |
 
 ## Error Handling
 
@@ -172,6 +180,7 @@ The tool gracefully handles common errors:
 ## Development
 
 ### Building and Testing
+
 ```bash
 # Run with different test cases
 tree-tool -f
@@ -180,6 +189,7 @@ tree-tool ./src --files --ascii
 ```
 
 ### File Structure
+
 ```
 tree-tool/
 ├── tree.js          # Main application (ES6 modules)
@@ -188,6 +198,7 @@ tree-tool/
 ```
 
 ### Development Setup
+
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
