@@ -33,7 +33,7 @@ Download `tree.js` and run it with Node.js.
 
 ```bash
 # Show directory structure (folders only)
-tree-tool
+tree-tool .
 
 # Show specific directory
 tree-tool C:/Projects
