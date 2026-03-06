@@ -52,8 +52,11 @@ tree-tool ./src
 ### Examples
 
 ```bash
-# Current directory (folders only)
+# Help
 tree-tool
+
+# Current directory (folders only)
+tree-tool .
 
 # Show files in directory
 tree-tool -f
