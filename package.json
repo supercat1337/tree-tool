@@ -1,21 +1,32 @@
 {
     "name": "@supercat1337/tree-tool",
-    "version": "1.0.1",
-    "description": "An analogue of the Windows tree command for Node.js",
-    "main": "tree.js",
+    "version": "1.1.0",
+    "description": "Advanced cross-platform directory tree generator with Glob support, multiple excludes, and pretty-aligned documentation output.",
     "bin": {
-        "tree-tool": "./tree.js"
+        "tree-tool": "./bin/tree-tool.js"
     },
+    "main": "./src/index.js",
     "scripts": {
-        "start": "tree-tool"
+        "start": "node ./bin/tree-tool.js",
+        "test-pretty": "node ./bin/tree-tool.js . -f -p -e 'node_modules/**' -e '.git/**'"
     },
     "type": "module",
     "keywords": [
         "tree",
-        "directory",
-        "windows",
-        "cli"
+        "directory-tree",
+        "cli",
+        "glob",
+        "fast-glob",
+        "pretty-print",
+        "documentation",
+        "devtools",
+        "filesystem"
     ],
     "author": "Albert Bazaleev",
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "fast-glob": "^3.3.3",
+        "minimist": "^1.2.8",
+        "picomatch": "^4.0.3"
+    }
 }

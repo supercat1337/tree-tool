@@ -1,224 +1,103 @@
-# Tree Command for Node.js
+# @supercat1337/tree-tool
 
-A cross-platform directory tree visualization tool with modern ES6 syntax, built with pure Node.js.
+A powerful, cross-platform directory tree visualization tool for Node.js. While inspired by the classic Windows `tree` command, this utility is enhanced with Glob support, smart formatting, and modern CLI features.
 
-## Features
+## 🚀 Features
 
-- ✅ **Modern ES6 Syntax** - uses latest JavaScript features and modules
-- ✅ **Cross-platform** - works on Windows, macOS, and Linux
-- ✅ **Pure JavaScript** - no external dependencies
-- ✅ **Unicode and ASCII support** - beautiful tree rendering with fallback to ASCII
-- ✅ **Error handling** - graceful handling of permission errors and invalid paths
-- ✅ **Flexible depth control** - customizable recursion depth
-- ✅ **Standard CLI syntax** - supports both short (`-f`) and long (`--files`) options
+- ✅ **Modern & Fast** - Built with ESM and powered by `fast-glob`.
+- ✅ **Glob Exclusions** - Hide complex paths like `**/node_modules/**` or `dist/*.log`.
+- ✅ **Pretty Alignment** - Use `--pretty` to align `# [ignored]` comments for professional documentation.
+- ✅ **Cross-platform** - Native support for Windows, macOS, and Linux.
+- ✅ **Clean JSDoc** - Fully typed source code for better maintainability.
 
-## Installation
+## 📦 Comparison with Windows `tree`
 
-### Method 1: Clone the repository
+| Feature             | Windows `tree` | `@supercat1337/tree-tool`     |
+| ------------------- | -------------- | ----------------------------- |
+| Glob Patterns       | ❌             | ✅ (via `fast-glob`)          |
+| Multiple Exclusions | ❌             | ✅ (Multiple `-e` flags)      |
+| Pretty Alignment    | ❌             | ✅ (Flag `--pretty`)          |
+| Unicode support     | Limited        | ✅ Full (with ASCII fallback) |
+| Built with          | Binary         | ✅ Node.js / ESM              |
+
+## 🛠 Installation
 
 ```bash
-git clone https://github.com/supercat1337/tree-tool.git
-cd tree-tool
-npm install
-npm link
+npm install @supercat1337/tree-tool
+
 ```
 
-### Method 2: Direct download
+## ⌨️ Usage
 
-Download `tree.js` and run it with Node.js.
-
-## Usage
-
-### Basic Usage
+### Basic commands
 
 ```bash
-# Show directory structure (folders only)
+# Basic tree (directories only)
 tree-tool .
 
-# Show specific directory
-tree-tool C:/Projects
-tree-tool ./src
-```
-
-### Command Line Options
-
-| Option            | Short       | Description                                         |
-| ----------------- | ----------- | --------------------------------------------------- |
-| `--files`         | `-f`        | Display files in each folder                        |
-| `--ascii`         | `-a`        | Use ASCII characters instead of extended characters |
-| `--output <file>` | `-o <file>` | Output results to specified file                    |
-| `--help`          | `-h`        | Display help information                            |
-
-### Examples
-
-```bash
-# Help
-tree-tool
-
-# Current directory (folders only)
-tree-tool .
-
-# Show files in directory
+# Show files and include hidden dot-files
 tree-tool -f
-tree-tool --files
-
-# Use ASCII characters
-tree-tool -a
-tree-tool --ascii
-
-# Output to file
-tree-tool -o output.txt
-tree-tool --output tree-structure.txt
-
-# Show files with ASCII characters
-tree-tool -f -a
-tree-tool --files --ascii
-
-# Specific path with all options
-tree-tool C:/Projects/my-app -f -a -o tree.txt
-
-# Help information
-tree-tool -h
-tree-tool --help
-
-# Combine options
-tree-tool ./src --files --output structure.txt
-```
-
-## API Usage
-
-You can also use the tree function programmatically in your Node.js applications:
-
-### ES6 Import Syntax
-
-```javascript
-import { tree } from './tree.js';
-
-// Basic usage
-tree('./src');
-
-// With options
-tree('./src', { showFiles: true, useAscii: false });
-
-// Custom depth
-tree('./src', { showFiles: true }, 2); // Max 2 levels deep
-```
-
-### CommonJS Syntax (if needed)
-
-```javascript
-const { tree } = require('./tree.js');
-
-// Basic usage
-tree('./src');
-```
-
-### Options Object
-
-- `showFiles` (boolean): Whether to display files (default: `false`)
-- `useAscii` (boolean): Use ASCII characters instead of Unicode (default: `false`)
-- `maxDepth` (number): Maximum recursion depth (-1 for unlimited, default: `-1`)
-
-## Output Examples
-
-### Default Output (Unicode)
 
 ```
-my-app/
+
+### Advanced Filtering (Glob)
+
+You can exclude multiple patterns simultaneously. Always wrap globs in quotes:
+
+```bash
+tree-tool -f -e "node_modules/**" -e ".git/**" -e "coverage/**"
+
+```
+
+### Documentation Mode (Pretty)
+
+The `--pretty` (or `-p`) flag aligns labels after a `#` sign, making it perfect for your project's `README.md`:
+
+```bash
+tree-tool -f -p -e "node_modules/**" -e ".git/**" -o result.txt
+
+```
+
+_Example output:_
+
+```text
+/your/project/path
 ├── src/
-│   ├── components/
-│   │   ├── Header.js
-│   │   └── Footer.js
-│   ├── utils/
+│   ├── builder.js
 │   └── index.js
-├── public/
-├── package.json
-└── README.md
-```
-
-### ASCII Output (`-a` parameter)
+├── node_modules/     # [ignored]
+├── .git/             # [ignored]
+└── package.json
 
 ```
-my-app/
-|-- src/
-|   |-- components/
-|   |   |-- Header.js
-|   |   +-- Footer.js
-|   |-- utils/
-|   +-- index.js
-|-- public/
-|-- package.json
-+-- README.md
-```
 
-### File Output Example
+## ⚙️ CLI Options
 
-```bash
-# Save tree structure to file
-tree-tool -f -a -o project-structure.txt
-```
+| Option      | Short | Description                                |
+| ----------- | ----- | ------------------------------------------ |
+| `--files`   | `-f`  | Display files in the tree                  |
+| `--exclude` | `-e`  | Glob pattern to exclude (multiple allowed) |
+| `--pretty`  | `-p`  | Align `# [ignored]` comments               |
+| `--depth`   | `-d`  | Maximum recursion depth (default: -1)      |
+| `--ascii`   | `-a`  | Use ASCII symbols instead of Unicode       |
+| `--output`  | `-o`  | Save tree output to a file                 |
+| `--help`    | `-h`  | Show this help message                     |
 
-## Comparison with Windows tree
+## 🏗 Project Structure
 
-| Feature                  | Windows `tree` | This Tool    |
-| ------------------------ | -------------- | ------------ |
-| Show files (`/f` / `-f`) | ✅             | ✅           |
-| ASCII mode (`/a` / `-a`) | ✅             | ✅           |
-| Output to file           | ❌             | ✅           |
-| Cross-platform           | ❌             | ✅           |
-| Custom depth             | ❌             | ✅ (via API) |
-| Error handling           | Basic          | Enhanced     |
-| Unicode support          | Limited        | Full         |
-| Modern CLI syntax        | ❌             | ✅           |
-
-## Error Handling
-
-The tool gracefully handles common errors:
-
-- **Path not found**: Shows clear error message
-- **Permission denied**: Continues with accessible directories
-- **Invalid parameters**: Shows help information
-- **File write errors**: Handles output file creation issues
-
-## Development
-
-### Building and Testing
-
-```bash
-# Run with different test cases
-tree-tool -f
-tree-tool -a -o test.txt
-tree-tool ./src --files --ascii
-```
-
-### File Structure
-
-```
+```text
 tree-tool/
-├── tree.js          # Main application (ES6 modules)
-├── README.md        # Documentation
-└── package.json     # Project configuration (if any)
+├── bin/
+│   └── tree-tool.js   # CLI Entry point
+├── src/
+│   ├── builder.js     # Glob & Logic
+│   ├── cli.js         # Argument parsing
+│   ├── formatter.js   # Tree symbols
+│   └── index.js       # Orchestrator & Rendering
+└── package.json
+
 ```
-
-### Development Setup
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## License
 
 MIT
-
-## Acknowledgments
-
-- Inspired by the Windows `tree` command
-- Built with pure Node.js and ES6 for modern development
-- Cross-platform testing on Windows, macOS, and Linux
-- Uses Node.js built-in utilities for robust argument parsing
-
----
-
-**Note**: This tool requires Node.js version 14.8.0 or higher for ES6 module support and the `node:util` parseArgs function.
